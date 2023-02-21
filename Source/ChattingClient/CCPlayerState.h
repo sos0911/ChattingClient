@@ -10,6 +10,7 @@
 UENUM(BlueprintType)
 enum class EPlayerState : uint8
 {
+	UnConnected UMETA(Displayname = "UnConnected"),
 	Connected UMETA(Displayname = "Connected"),
 	Login UMETA(Displayname = "Login"),
 	Chatting UMETA(Displayname = "Chatting")
@@ -24,7 +25,7 @@ class CHATTINGCLIENT_API ACCPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
-	EPlayerState PlayerState = EPlayerState::Connected;
+	EPlayerState EnumPlayerState = EPlayerState::UnConnected;
 
 	ACCPlayerState();
 };

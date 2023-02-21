@@ -42,10 +42,12 @@ private:
 	UFUNCTION(BlueprintCallable)
 		void SummitButtonCallback();
 	UFUNCTION(BlueprintCallable)
-		class APlayerController* GetPlayerController();
+		class ACCPlayerController* GetPlayerController();
 	
 	UCCNetworkManager* NetworkManager;
 
 protected:
 	virtual void NativeConstruct();
+public:
+	void SetConnectedUI();
 };

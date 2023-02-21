@@ -1,10 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "FServerProtocol.h"
 #include "CCNetworkManager.h"
+#include "FServerProtocol.h"
 #include "Windows/AllowWindowsPlatformTypes.h"
 #include "CCPlayerController.h"
-
+#include "CCPlayerState.h"
+#include <string>
+#include "Internationalization/Text.h"
+//#include "Internationalization/TextConverter.h"
+#include "Internationalization/Internationalization.h"
 
 void UCCNetworkManager::Shutdown()
 {
@@ -23,11 +27,18 @@ UCCNetworkManager::UCCNetworkManager()
 	EncodedBuf = "";
 
 	// donghyun : 플레이어 컨트롤러 캐싱
-	PlayerController =  Cast<ACCPlayerController>(GetWorld()->GetFirstPlayerController());
+	//PlayerController =  Cast<ACCPlayerController>(GetWorld()->GetFirstPlayerController());
 }
 
 void UCCNetworkManager::Initialize(const FString& ServerIP_Str, const FString& Port)
 {
+	if (GetWorld())
+	{
+		APlayerController* Temp = GetWorld()->GetFirstPlayerController();
+		PlayerController = Cast<ACCPlayerController>(Temp);
+		//PlayerController = Cast<ACCPlayerController>(GetWorld()->GetFirstPlayerController());
+	}
+
 	int32 Port_Int = FCString::Atoi(*Port);
 	TSharedPtr<FInternetAddr> ServerIP_Ptr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	bool IsValid = true;
@@ -41,6 +52,7 @@ void UCCNetworkManager::Initialize(const FString& ServerIP_Str, const FString& P
 		if (socket->Connect(*ServerIP_Ptr))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("connected to server"));
+			PlayerController->SetPlayerState(EPlayerState::Connected);
 		}
 		else
 		{
@@ -55,20 +67,24 @@ void UCCNetworkManager::Initialize(const FString& ServerIP_Str, const FString& P
 
 void UCCNetworkManager::sendMsg(const FString& msg)
 {
-	TArray<uint8> Msg_Bytes;
-	FTCHARToUTF8 Converter(*msg);
-	Msg_Bytes.Append((uint8*)Converter.Get(), Converter.Length());
-
-	int32 ByteSent = 0;
-	bool IsSended = socket->Send(Msg_Bytes.GetData(), Msg_Bytes.Num(), ByteSent);
-	
-	if (IsSended)
+	if (!socket)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Sent message: %s"), *msg);
+		return;
 	}
-	else
+
+	//packetEnd += "\n";
+	char message[1024];
+	const wchar_t* encode = *msg;
+	char defaultSetting = '?';
+
+	int32 len = WideCharToMultiByte(CP_ACP, 0, encode, -1, NULL, 0, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, encode, -1, message, len, &defaultSetting, NULL);
+	int32 bytesSents = 0;
+
+	bool IsSent = socket->Send((uint8*)(message), len, bytesSents);
+	if (!IsSent)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to send msg"));
+		UE_LOG(LogTemp, Warning, TEXT("send error!"));
 	}
 }
 
@@ -113,9 +129,46 @@ void UCCNetworkManager::RecvMsg()
 
 void UCCNetworkManager::JudgePacket(const FString& msg)
 {
+	//UE_LOG(LogTemp, Warning, TEXT(msg));
 	if (msg.Contains(FString(LoginSuccessMsg)))
 	{
-		PlayerController->Login();
+		PlayerController->SetLoginUI();
 	}
 }
 
+void UCCNetworkManager::Init()
+{
+
+}
+
+const FString UCCNetworkManager::FormatLoginComm(const FString& Nickname)
+{
+	return FString::Printf(TEXT("login %s\r\n"), *Nickname);
+}
+
+//FString UCCNetworkManager::KoreanToFString(const FString& InKoreanText)
+//{
+//	FString OutUTF8Text;
+//
+//	const FTextConverter::EConversionMode ConversionMode = FTextConverter::EConversionMode::AutoDetect;
+//	const FString SourceString = InKoreanText;
+//	const bool bEnsureTerminated = true;
+//	const TCHAR* SourcePtr = *SourceString;
+//	const int32 SourceLength = FCString::Strlen(SourcePtr);
+//	const ESearchCase::Type SearchCase = ESearchCase::CaseSensitive;
+//	const ESearchDir::Type SearchDir = ESearchDir::FromEnd;
+//	const FString ChosenCulture = FString(TEXT("ko-KR"));
+//
+//	FTextConverter::Convert(
+//		ConversionMode,
+//		SourcePtr,
+//		SourceLength,
+//		OutUTF8Text,
+//		bEnsureTerminated,
+//		SearchCase,
+//		SearchDir,
+//		ChosenCulture
+//	);
+//
+//	return OutUTF8Text;
+//}

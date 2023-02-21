@@ -40,4 +40,8 @@ public:
 	void RecvMsg();
 	// donghyun : 메세지 받은거 구분해서 흐름 넘겨주는 함수
 	void JudgePacket(const FString& msg);
+	void Init() override;
+
+	const FString FormatLoginComm(const FString& Nickname);
+	//FString KoreanToFString(const FString& InKoreanText);
 };

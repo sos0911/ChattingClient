@@ -18,34 +18,33 @@ void UUW_Login::SummitButtonCallback()
 	}
 
 	// donghyun : 1. 연결 부분
-	if (PlayerState->PlayerState == EPlayerState::Connected)
+	if (PlayerState->EnumPlayerState == EPlayerState::UnConnected)
 	{
-		if (NetworkManager)
+		if (!NetworkManager || !PlayerControllerPtr)
 		{
-			/*int Itemnumber = 2;
-			TMap<FString, FStringFormatArg> args;
-			args.Emplace(Input_IP->GetText().ToString(), \
-				Input_Port->GetText().ToString());
-			FString msg = FString::Format(TEXT("o {} {}"), args);*/
-
-			NetworkManager->Initialize(Input_IP->GetText().ToString(), Input_Port->GetText().ToString());
-
-			Text_IP->SetVisibility(ESlateVisibility::Hidden);
-			Input_IP->SetVisibility(ESlateVisibility::Hidden);
-			Text_Port->SetVisibility(ESlateVisibility::Hidden);
-			Input_Port->SetVisibility(ESlateVisibility::Hidden);
-
-			Text_Nickname->SetVisibility(ESlateVisibility::Visible);
-			Input_Nickname->SetVisibility(ESlateVisibility::Visible);
-
-			/*FString msg = FString::Printf(TEXT("o %s %s"), *(Input_IP->GetText().ToString()), \
-				* (Input_Port->GetText().ToString()));
-			NetworkManager->sendMsg(msg);*/
+			return;
 		}
+
+		/*int Itemnumber = 2;
+		TMap<FString, FStringFormatArg> args;
+		args.Emplace(Input_IP->GetText().ToString(), \
+			Input_Port->GetText().ToString());
+		FString msg = FString::Format(TEXT("o {} {}"), args);*/
+
+		NetworkManager->Initialize(Input_IP->GetText().ToString(), Input_Port->GetText().ToString());
+
+		//PlayerControllerPtr->SetConntectedUI();
+		SetConnectedUI();
+
+		/*FString msg = FString::Printf(TEXT("o %s %s"), *(Input_IP->GetText().ToString()), \
+			* (Input_Port->GetText().ToString()));
+		NetworkManager->sendMsg(msg);*/
 	}
 	// donghyun : 2. 로그인 부분
-	else if(PlayerState->PlayerState == EPlayerState::Login)
+	else if(PlayerState->EnumPlayerState == EPlayerState::Connected)
 	{
+		// donghyun : UI를 바꿔주는 것은 서버로부터 닉네임 중복 응답이 온 후 진행
+		NetworkManager->sendMsg(NetworkManager->FormatLoginComm(Input_Nickname->GetText().ToString()));
 		UE_LOG(LogTemp, Warning, TEXT("Login message sent"));
 	}
 	else
@@ -54,12 +53,12 @@ void UUW_Login::SummitButtonCallback()
 	}
 }
 
-APlayerController* UUW_Login::GetPlayerController()
+ACCPlayerController* UUW_Login::GetPlayerController()
 {
 	UWorld* World = GetWorld();
 	if (World != nullptr)
 	{
-		return World->GetFirstPlayerController();
+		return Cast<ACCPlayerController>(World->GetFirstPlayerController());
 	}
 	return nullptr;
 }
@@ -76,4 +75,15 @@ void UUW_Login::NativeConstruct()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("networkmanager is null pointer"));
 	}
+}
+
+void UUW_Login::SetConnectedUI()
+{
+	Text_IP->SetVisibility(ESlateVisibility::Hidden);
+	Text_Port->SetVisibility(ESlateVisibility::Hidden);
+	Input_IP->SetVisibility(ESlateVisibility::Hidden);
+	Input_Port->SetVisibility(ESlateVisibility::Hidden);
+
+	Text_Nickname->SetVisibility(ESlateVisibility::Visible);
+	Input_Nickname->SetVisibility(ESlateVisibility::Visible);
 }

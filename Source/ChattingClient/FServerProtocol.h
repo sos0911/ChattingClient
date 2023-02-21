@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType)
-enum class EQueryFlag
+enum class EQueryFlag : uint8
 {
 	MakeRoom UMETA(Displayname = "MakeRoom"),
 	JoinRoom UMETA(Displayname = "JoinRoom"),
@@ -19,8 +19,10 @@ enum class EQueryFlag
 constexpr int RECVBUFSIZE = 1024;
 
 // donghyun : 아래 msg들은 실제로 오는 메세지의 일부분일 수 있음
-extern FString LoginSuccessMsg = "로그인 하였습니다.";
-extern FString LoginFailMsg = "해당 이름은 사용할 수 없습니다";
+//extern FString LoginSuccessMsg = TEXT("로그인 하였습니다.");
+//extern FString LoginFailMsg = TEXT("해당 이름은 사용할 수 없습니다");
+extern FString LoginSuccessMsg;
+extern FString LoginFailMsg;
 
 //대화방이 개설되었습니다.
 //자기 자신에게는 보낼 수 없습니다.

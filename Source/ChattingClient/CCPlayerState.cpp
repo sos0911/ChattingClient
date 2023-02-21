@@ -5,5 +5,5 @@
 
 ACCPlayerState::ACCPlayerState()
 {
-	PlayerState = EPlayerState::Connected;
+	EnumPlayerState = EPlayerState::UnConnected;
 }
