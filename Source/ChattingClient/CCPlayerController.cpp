@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CCPlayerController.h"
+#include "UW_Login.h"
+#include "CCNetworkManager.h"
 
 ACCPlayerController::ACCPlayerController()
 {
@@ -24,9 +25,26 @@ void ACCPlayerController::BeginPlay()
 			LoginUIObject->AddToViewport();
 		}
 	}
+
+	NetworkManagerPtr = Cast<UCCNetworkManager>(\
+		UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!NetworkManagerPtr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("networkmanager is null pointer"));
+	}
 }
 
-void ACCPlayerController::SetupInputComponent()
+//void ACCPlayerController::SetupInputComponent()
+//{
+//	Super::SetupInputComponent();
+//}
+
+void ACCPlayerController::PlayerTick(float Deltatime)
 {
-	Super::SetupInputComponent();
+	NetworkManagerPtr->RecvMsg();
+}
+
+void ACCPlayerController::Login()
+{
+	
 }

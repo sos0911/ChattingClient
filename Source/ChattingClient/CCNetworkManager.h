@@ -9,8 +9,10 @@
 #include "SocketSubsystem.h"
 //#include "/Engine/Source/Runtime/Sockets/Public/SocketSubsystem.h"
 
-#include "CCNetworkManager.generated.h"
 
+#include "CCNetworkManager.generated.h" 
+
+class ACCPlayerController;
 
 /**
  * 
@@ -22,6 +24,9 @@ class CHATTINGCLIENT_API UCCNetworkManager : public UGameInstance
 
 private:
 	FSocket* socket;
+	FString EncodedBuf;
+	ACCPlayerController* PlayerController;
+
 	virtual void Shutdown();
 
 public:
@@ -32,4 +37,7 @@ public:
 	// 서버 입장에서는 텔넷이 보낼때 '\r\n'을 무조건 뒤에 붙이므로
 	// 이거 붙여서 보내야 통일 가능
 	void sendMsg(const FString& msg);
+	void RecvMsg();
+	// donghyun : 메세지 받은거 구분해서 흐름 넘겨주는 함수
+	void JudgePacket(const FString& msg);
 };
