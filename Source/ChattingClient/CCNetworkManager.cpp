@@ -52,6 +52,7 @@ void UCCNetworkManager::Initialize(const FString& ServerIP_Str, const FString& P
 		if (socket->Connect(*ServerIP_Ptr))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("connected to server"));
+			PlayerController->SetConntectedUI();
 			PlayerController->SetPlayerState(EPlayerState::Connected);
 		}
 		else
@@ -130,10 +131,51 @@ void UCCNetworkManager::RecvMsg()
 void UCCNetworkManager::JudgePacket(const FString& msg)
 {
 	//UE_LOG(LogTemp, Warning, TEXT(msg));
-	if (msg.Contains(FString(LoginSuccessMsg)))
+
+	EPlayerState CurPlayerState = PlayerController->GetPlayerState();
+
+	switch (CurPlayerState)
 	{
-		PlayerController->SetLoginUI();
+	case EPlayerState::Connected:
+	{
+		if (msg.Contains(FString(LoginSuccessMsg)))
+		{
+			PlayerController->SetLoginUI();
+			PlayerController->SetPlayerState(EPlayerState::Login);
+		}
+		break;
 	}
+	case EPlayerState::ShowPlayerListCommSent:
+	{
+		PlayerController->SetPlayerListUI(msg);
+		PlayerController->UndoPlayerState();
+		break;
+	}
+	case EPlayerState::ShowRoomListCommSent:
+	{
+		PlayerController->SetRoomListUI(msg);
+		PlayerController->UndoPlayerState();
+		break;
+	}
+	case EPlayerState::ShowPlayerInfoCommSent:
+	{
+		PlayerController->SetPlayerInfoUI(msg);
+		PlayerController->UndoPlayerState();
+		break;
+	}
+	case EPlayerState::ShowRoomInfoCommSent:
+	{
+		PlayerController->SetRoomInfoUI(msg);
+		PlayerController->UndoPlayerState();
+		break;
+	}
+	default:
+	{
+		// nothing to do
+		break;
+	}
+	}
+	
 }
 
 void UCCNetworkManager::Init()
@@ -143,7 +185,27 @@ void UCCNetworkManager::Init()
 
 const FString UCCNetworkManager::FormatLoginComm(const FString& Nickname)
 {
-	return FString::Printf(TEXT("login %s\r\n"), *Nickname);
+	return FString::Printf(TEXT("login %s\n"), *Nickname);
+}
+
+const FString UCCNetworkManager::FormatShowPlayerListComm()
+{
+	return FString::Printf(TEXT("us\n"));
+}
+
+const FString UCCNetworkManager::FormatShowRoomListComm()
+{
+	return FString::Printf(TEXT("lt\n"));
+}
+
+const FString UCCNetworkManager::FormatShowPlayerInfoComm(const FString& Nickname)
+{
+	return FString::Printf(TEXT("pf %s\n"), *Nickname);
+}
+
+const FString UCCNetworkManager::FormatShowRoomInfoComm(const FString& RoomNum)
+{
+	return FString::Printf(TEXT("st %s\n"), *RoomNum);
 }
 
 //FString UCCNetworkManager::KoreanToFString(const FString& InKoreanText)

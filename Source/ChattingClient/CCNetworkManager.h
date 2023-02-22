@@ -43,5 +43,10 @@ public:
 	void Init() override;
 
 	const FString FormatLoginComm(const FString& Nickname);
+	const FString FormatShowPlayerListComm();
+	const FString FormatShowRoomListComm();
+	const FString FormatShowPlayerInfoComm(const FString& Nickname);
+	const FString FormatShowRoomInfoComm(const FString& RoomNum);
+
 	//FString KoreanToFString(const FString& InKoreanText);
 };

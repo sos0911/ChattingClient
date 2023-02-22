@@ -22,6 +22,8 @@ private:
 	UPROPERTY(Meta = (BindWidget))
 		UScrollBox* ScrollBox_PlayerList;
 	UPROPERTY(Meta = (BindWidget))
+		UScrollBox* ScrollBox_ChatList;
+	UPROPERTY(Meta = (BindWidget))
 		UScrollBox* ScrollBox_RoomList;
 
 	UPROPERTY(Meta = (BindWidget))
@@ -55,10 +57,14 @@ private:
 		void PlayerListRenewButtonCallback();
 
 	UFUNCTION(BlueprintCallable)
-		class APlayerController* GetPlayerController();
+		class ACCPlayerController* GetPlayerController();
 
 	UCCNetworkManager* NetworkManager;
 
 protected:
 	virtual void NativeConstruct();
+
+public:
+	void SetPlayerListUI(const FString& msg);
+	void SetRoomListUI(const FString& msg);
 };

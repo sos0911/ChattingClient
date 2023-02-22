@@ -23,6 +23,7 @@ constexpr int RECVBUFSIZE = 1024;
 //extern FString LoginFailMsg = TEXT("해당 이름은 사용할 수 없습니다");
 extern FString LoginSuccessMsg;
 extern FString LoginFailMsg;
+extern FString PlayerListMsg;
 
 //대화방이 개설되었습니다.
 //자기 자신에게는 보낼 수 없습니다.

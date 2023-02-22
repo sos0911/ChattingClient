@@ -34,7 +34,7 @@ void UUW_Login::SummitButtonCallback()
 		NetworkManager->Initialize(Input_IP->GetText().ToString(), Input_Port->GetText().ToString());
 
 		//PlayerControllerPtr->SetConntectedUI();
-		SetConnectedUI();
+		//SetConnectedUI();
 
 		/*FString msg = FString::Printf(TEXT("o %s %s"), *(Input_IP->GetText().ToString()), \
 			* (Input_Port->GetText().ToString()));

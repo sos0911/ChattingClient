@@ -13,7 +13,12 @@ enum class EPlayerState : uint8
 	UnConnected UMETA(Displayname = "UnConnected"),
 	Connected UMETA(Displayname = "Connected"),
 	Login UMETA(Displayname = "Login"),
-	Chatting UMETA(Displayname = "Chatting")
+	Chatting UMETA(Displayname = "Chatting"),
+	ShowPlayerListCommSent UMETA(Displayname = "ShowPlayerListCommSent"),
+	ShowRoomListCommSent UMETA(Displayname = "ShowRoomListCommSent"),
+	ShowPlayerInfoCommSent UMETA(Displayname = "ShowPlayerInfoCommSent"),
+	ShowRoomInfoCommSent UMETA(Displayname = "ShowRoomInfoCommSent"),
+
 };
 
 /**
@@ -26,6 +31,7 @@ class CHATTINGCLIENT_API ACCPlayerState : public APlayerState
 
 public:
 	EPlayerState EnumPlayerState = EPlayerState::UnConnected;
+	EPlayerState BefEnumPlayerState = EPlayerState::UnConnected;
 
 	ACCPlayerState();
 };
