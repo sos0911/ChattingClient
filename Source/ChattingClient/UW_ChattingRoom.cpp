@@ -8,7 +8,51 @@
 
 void UUW_ChattingRoom::RoomExitCallback()
 {
+	auto PlayerControllerPtr = GetPlayerController();
+	if (!PlayerControllerPtr)
+	{
+		return;
+	}
+
+	NetworkManager->sendMsg(NetworkManager->FormatQuitChattingRoomComm());
 	this->RemoveFromViewport();
+	PlayerControllerPtr->ChattingRoomToWaitRoom();
+}
+
+void UUW_ChattingRoom::SendChattingCallback(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	switch (CommitMethod)
+	{
+	/*case ETextCommit::Default:
+		break;*/
+	case ETextCommit::OnEnter:
+	{
+		if (Text.IsEmpty())
+			return;
+
+		if (NetworkManager == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("networkmanager is null pointer"));
+			return;
+		}
+
+		NetworkManager->sendMsg(Input_Chat->GetText().ToString() + '\n');
+
+		/*UTextBlock* NewTextBlock = NewObject<UTextBlock>();
+		NewTextBlock->SetText(Text);
+		ScrollBox_Chat->AddChild(NewTextBlock);
+		ScrollBox_Chat->ScrollToEnd();*/
+
+		Input_Chat->SetText(FText());
+	}
+	break;
+	/*case ETextCommit::OnUserMovedFocus:
+		break;
+	case ETextCommit::OnCleared:
+		break;*/
+	default:
+		break;
+	}
 }
 
 ACCPlayerController* UUW_ChattingRoom::GetPlayerController()
@@ -28,6 +72,8 @@ void UUW_ChattingRoom::NativeConstruct()
 		Button_Exit->OnClicked.AddDynamic(this, &UUW_ChattingRoom::RoomExitCallback);
 	}
 
+	Input_Chat->OnTextCommitted.AddDynamic(this, &UUW_ChattingRoom::SendChattingCallback);
+
 	NetworkManager = Cast<UCCNetworkManager>(\
 		UGameplayStatics::GetGameInstance(GetWorld()));
 	if (!NetworkManager)
@@ -36,10 +82,14 @@ void UUW_ChattingRoom::NativeConstruct()
 	}
 }
 
-void UUW_ChattingRoom::SetChatInfoUI(const FString& msg)
+void UUW_ChattingRoom::RenewChattingRoomLog(const FString& msg)
 {
 	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox_Chat);
-	NewTextBlock->SetText(FText::FromString(msg));
+	int32 MsgSize = msg.Len();
+	FString SubStr = msg.Mid(0, MsgSize - 2);
+	NewTextBlock->SetText(FText::FromString(SubStr));
+	//NewTextBlock->SetText(FText::FromString(msg));
 
 	ScrollBox_Chat->AddChild(NewTextBlock);
+	ScrollBox_Chat->ScrollToEnd();
 }

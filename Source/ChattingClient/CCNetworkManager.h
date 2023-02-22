@@ -47,6 +47,10 @@ public:
 	const FString FormatShowRoomListComm();
 	const FString FormatShowPlayerInfoComm(const FString& Nickname);
 	const FString FormatShowRoomInfoComm(const FString& RoomNum);
+	const FString FormatMakeRoomComm(const FString& RoomMaximumCnt, const FString& RoomName);
+	const FString FormatQuitChattingRoomComm();
+	const FString FormatJoinRoomComm(const FString& RoomNum);
+	const FString FormatWhisperComm(const FString& PlayerName, const FString& Msg);
 
 	//FString KoreanToFString(const FString& InKoreanText);
 };

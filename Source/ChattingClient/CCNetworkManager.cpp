@@ -147,13 +147,13 @@ void UCCNetworkManager::JudgePacket(const FString& msg)
 	}
 	case EPlayerState::ShowPlayerListCommSent:
 	{
-		PlayerController->SetPlayerListUI(msg);
+		PlayerController->SetInfoListUI(msg);
 		PlayerController->UndoPlayerState();
 		break;
 	}
 	case EPlayerState::ShowRoomListCommSent:
 	{
-		PlayerController->SetRoomListUI(msg);
+		PlayerController->SetInfoListUI(msg);
 		PlayerController->UndoPlayerState();
 		break;
 	}
@@ -168,6 +168,30 @@ void UCCNetworkManager::JudgePacket(const FString& msg)
 		PlayerController->SetRoomInfoUI(msg);
 		PlayerController->UndoPlayerState();
 		break;
+	}
+	case EPlayerState::Chatting:
+	{
+		PlayerController->RenewChattingRoomLog(msg);
+		break;
+	}
+	case EPlayerState::JoinRoomCommSent:
+	{
+		if (msg.Contains(FString(JoinRoomSuccessMsg)))
+		{
+			PlayerController->RemoveJoinRoomPopup();
+			PlayerController->WaitRoomToChattingRoom();
+			PlayerController->RenewChattingRoomLog(msg);
+		}
+		else
+		{
+			PlayerController->SetJoinRoomResultUI(msg);
+		}
+		break;
+	}
+	case EPlayerState::Login:
+	{
+		// donghyun : 보통 귓속말이 오는 경우이다.
+		PlayerController->SetWhisperUI(msg);
 	}
 	default:
 	{
@@ -207,6 +231,27 @@ const FString UCCNetworkManager::FormatShowRoomInfoComm(const FString& RoomNum)
 {
 	return FString::Printf(TEXT("st %s\n"), *RoomNum);
 }
+
+const FString UCCNetworkManager::FormatMakeRoomComm(const FString& RoomMaximumCnt, const FString& RoomName)
+{
+	return FString::Printf(TEXT("o %s %s\n"), *RoomMaximumCnt, *RoomName);
+}
+
+const FString UCCNetworkManager::FormatQuitChattingRoomComm()
+{
+	return FString::Printf(TEXT("/q\n"));
+}
+
+const FString UCCNetworkManager::FormatJoinRoomComm(const FString& RoomNum)
+{
+	return FString::Printf(TEXT("j %s\n"), *RoomNum);
+}
+
+const FString UCCNetworkManager::FormatWhisperComm(const FString& PlayerName, const FString& Msg)
+{
+	return FString::Printf(TEXT("to %s %s\n"), *PlayerName, *Msg);
+}
+
 
 //FString UCCNetworkManager::KoreanToFString(const FString& InKoreanText)
 //{

@@ -18,7 +18,7 @@ enum class EPlayerState : uint8
 	ShowRoomListCommSent UMETA(Displayname = "ShowRoomListCommSent"),
 	ShowPlayerInfoCommSent UMETA(Displayname = "ShowPlayerInfoCommSent"),
 	ShowRoomInfoCommSent UMETA(Displayname = "ShowRoomInfoCommSent"),
-
+	JoinRoomCommSent UMETA(Displayname = "JoinRoomCommSent"),
 };
 
 /**

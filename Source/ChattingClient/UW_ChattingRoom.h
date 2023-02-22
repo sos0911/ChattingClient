@@ -33,6 +33,8 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 		void RoomExitCallback();
+	UFUNCTION(BlueprintCallable)
+		void SendChattingCallback(const FText& Text, ETextCommit::Type CommitMethod);
 
 	UFUNCTION(BlueprintCallable)
 		class ACCPlayerController* GetPlayerController();
@@ -43,7 +45,7 @@ protected:
 	virtual void NativeConstruct();
 
 public:
-	void SetChatInfoUI(const FString& msg);
+	void RenewChattingRoomLog(const FString& msg);
 };
 
 

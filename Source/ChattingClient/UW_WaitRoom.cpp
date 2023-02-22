@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "CCPlayerController.h"
 #include "Runtime/UMG/Public/Components/TextBlock.h"
+#include "FUIProtocol.h"
 
 
 class ACCPlayerController* UUW_WaitRoom::GetPlayerController()
@@ -41,15 +42,12 @@ void UUW_WaitRoom::NativeConstruct()
 	{
 		Button_Player_Info->OnClicked.AddDynamic(this, &UUW_WaitRoom::PlayerInfoButtonCallback);
 	}
-	if (Button_Send_Whisper)
-	{
-		Button_Send_Whisper->OnClicked.AddDynamic(this, &UUW_WaitRoom::SendWhisperButtonCallback);
-	}
 	if (Button_PlayerList_Renew)
 	{
 		Button_PlayerList_Renew->OnClicked.AddDynamic(this, &UUW_WaitRoom::PlayerListRenewButtonCallback);
 	}
 
+	Input_WhisperMsg->OnTextCommitted.AddDynamic(this, &UUW_WaitRoom::SendWhisperCallback);
 
 	NetworkManager = Cast<UCCNetworkManager>(\
 		UGameplayStatics::GetGameInstance(GetWorld()));
@@ -59,24 +57,25 @@ void UUW_WaitRoom::NativeConstruct()
 	}
 }
 
-void UUW_WaitRoom::SetPlayerListUI(const FString& msg)
+void UUW_WaitRoom::SetInfoListUI(const FString& msg)
 {
-	ScrollBox_PlayerList->ClearChildren();
+	ScrollBox_InfoList->ClearChildren();
 
-	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox_PlayerList);
+	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox_InfoList);
+	NewTextBlock->Font.Size = FontProtocol::INFOLISTFONTSIZE;
 	NewTextBlock->SetText(FText::FromString(msg));
 
-	ScrollBox_PlayerList->AddChild(NewTextBlock);
+	ScrollBox_InfoList->AddChild(NewTextBlock);
 }
 
-void UUW_WaitRoom::SetRoomListUI(const FString& msg)
+void UUW_WaitRoom::SetWhisperUI(const FString& msg)
 {
-	ScrollBox_RoomList->ClearChildren();
-
-	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox_RoomList);
-	NewTextBlock->SetText(FText::FromString(msg));
-
-	ScrollBox_RoomList->AddChild(NewTextBlock);
+	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox_ChatList);
+	NewTextBlock->Font.Size = FontProtocol::INFOLISTFONTSIZE;
+	int32 MsgSize = msg.Len();
+	FString SubStr = msg.Mid(0, MsgSize - 2);
+	NewTextBlock->SetText(FText::FromString(SubStr));
+	ScrollBox_ChatList->AddChild(NewTextBlock);
 }
 
 void UUW_WaitRoom::RoomListRenewButtonCallback()
@@ -107,12 +106,24 @@ void UUW_WaitRoom::RoomListRenewButtonCallback()
 
 void UUW_WaitRoom::RoomJoinButtonCallback()
 {
+	auto PlayerControllerPtr = GetPlayerController();
+	if (!PlayerControllerPtr)
+	{
+		return;
+	}
 
+	PlayerControllerPtr->JoinRoomPopup();
 }
 
 void UUW_WaitRoom::RoomMakeButtonCallback()
 {
+	auto PlayerControllerPtr = GetPlayerController();
+	if (!PlayerControllerPtr)
+	{
+		return;
+	}
 
+	PlayerControllerPtr->MakeRoomPopup();
 }
 
 void UUW_WaitRoom::RoomInfoButtonCallback()
@@ -135,11 +146,6 @@ void UUW_WaitRoom::PlayerInfoButtonCallback()
 	}
 
 	PlayerControllerPtr->MakePlayerInfoPopup();
-}
-
-void UUW_WaitRoom::SendWhisperButtonCallback()
-{
-
 }
 
 void UUW_WaitRoom::PlayerListRenewButtonCallback()
@@ -166,4 +172,44 @@ void UUW_WaitRoom::PlayerListRenewButtonCallback()
 	PlayerControllerPtr->SetPlayerState(EPlayerState::ShowPlayerListCommSent);
 	NetworkManager->sendMsg(NetworkManager->FormatShowPlayerListComm());
 	UE_LOG(LogTemp, Warning, TEXT("show playerList command sent"));
+}
+
+void UUW_WaitRoom::SendWhisperCallback(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	switch (CommitMethod)
+	{
+		/*case ETextCommit::Default:
+			break;*/
+	case ETextCommit::OnEnter:
+	{
+		if (Text.IsEmpty())
+			return;
+
+		if (NetworkManager == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("networkmanager is null pointer"));
+			return;
+		}
+
+		NetworkManager->sendMsg(NetworkManager->FormatWhisperComm(Input_PlayerName->GetText().ToString(), \
+			Input_WhisperMsg->GetText().ToString()));
+
+		FString EchoMsg = FString::Printf(TEXT("%s > %s"), *Input_PlayerName->GetText().ToString(), *Input_WhisperMsg->GetText().ToString());
+
+		UTextBlock* NewTextBlock = NewObject<UTextBlock>();
+		NewTextBlock->Font.Size = FontProtocol::INFOLISTFONTSIZE;
+		NewTextBlock->SetText(FText::FromString(EchoMsg));
+		ScrollBox_ChatList->AddChild(NewTextBlock);
+		ScrollBox_ChatList->ScrollToEnd();
+
+		Input_WhisperMsg->SetText(FText());
+	}
+	break;
+	/*case ETextCommit::OnUserMovedFocus:
+		break;
+	case ETextCommit::OnCleared:
+		break;*/
+	default:
+		break;
+	}
 }

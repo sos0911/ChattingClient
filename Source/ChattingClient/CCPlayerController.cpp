@@ -6,6 +6,10 @@
 #include "UW_WaitRoom.h"
 #include "UW_PlayerInfoPopup.h"
 #include "UW_RoomInfoPopup.h"
+#include "UW_JoinRoomPopup.h"
+#include "UW_MakeRoomPopup.h"
+#include "UW_ChattingRoom.h"
+
 
 ACCPlayerController::ACCPlayerController()
 {
@@ -38,26 +42,6 @@ void ACCPlayerController::BeginPlay()
 	{
 		LoginUIObject->AddToViewport();
 	}
-
-
-	/*if (LoginUIClass)
-	{
-		LoginUIObject = CreateWidget<UUW_Login>(GetWorld(), LoginUIClass);
-		if (LoginUIObject)
-		{
-			LoginUIObject->AddToViewport();
-		}
-	}
-
-	if (WaitRoomUIClass)
-	{
-		WaitRoomUIObject = CreateWidget<UUW_WaitRoom>(GetWorld(), WaitRoomUIClass);
-	}
-
-	if (PlayerInfoUIClass)
-	{
-		PlayerInfoUIObject = CreateWidget<UUW_PlayerInfoPopup>(GetWorld(), PlayerInfoUIClass);
-	}*/
 
 	NetworkManagerPtr = Cast<UCCNetworkManager>(\
 		UGameplayStatics::GetGameInstance(GetWorld()));
@@ -132,24 +116,14 @@ void ACCPlayerController::SetLoginUI()
 	WaitRoomUIObject->AddToViewport();
 }
 
-void ACCPlayerController::SetPlayerListUI(const FString& msg)
+void ACCPlayerController::SetInfoListUI(const FString& msg)
 {
 	if (!WaitRoomUIObject)
 	{
 		return;
 	}
 	//auto WaitRoomUIObject = Cast<UUW_WaitRoom>(FindAndMakeClassObjects(WB_WaitRoom_Path));
-	WaitRoomUIObject->SetPlayerListUI(msg);
-}
-
-void ACCPlayerController::SetRoomListUI(const FString& msg)
-{
-	if (!WaitRoomUIObject)
-	{
-		return;
-	}
-	//auto WaitRoomUIObject = Cast<UUW_WaitRoom>(FindAndMakeClassObjects(WB_WaitRoom_Path));
-	WaitRoomUIObject->SetRoomListUI(msg);
+	WaitRoomUIObject->SetInfoListUI(msg);
 }
 
 void ACCPlayerController::SetPlayerInfoUI(const FString& msg)
@@ -189,6 +163,92 @@ void ACCPlayerController::SetRoomInfoUI(const FString& msg)
 		return;
 	}
 	RoomInfoUIObject->SetRoomInfoUI(msg);
+}
+
+void ACCPlayerController::MakeRoomPopup()
+{
+	MakeRoomUIObject = Cast<UUW_MakeRoomPopup>(FindAndMakeClassObjects(WB_MakeRoom_Path));
+	if (!MakeRoomUIObject)
+	{
+		return;
+	}
+	MakeRoomUIObject->AddToViewport();
+}
+
+void ACCPlayerController::RenewChattingRoomLog(const FString& msg)
+{
+	if (!ChattingRoomUIObject)
+	{
+		return;
+	}
+	ChattingRoomUIObject->RenewChattingRoomLog(msg);
+}
+
+void ACCPlayerController::WaitRoomToChattingRoom()
+{
+	SetPlayerState(EPlayerState::Chatting);
+
+	if (!WaitRoomUIObject)
+	{
+		return;
+	}
+	WaitRoomUIObject->RemoveFromViewport();
+
+	ChattingRoomUIObject = Cast<UUW_ChattingRoom>(FindAndMakeClassObjects(WB_ChattingRoom_Path));
+	if (!ChattingRoomUIObject)
+	{
+		return;
+	}
+	ChattingRoomUIObject->AddToViewport();
+}
+
+void ACCPlayerController::JoinRoomPopup()
+{
+	JoinRoomUIObject = Cast<UUW_JoinRoomPopup>(FindAndMakeClassObjects(WB_JoinRoom_Path));
+	if (!JoinRoomUIObject)
+	{
+		return;
+	}
+	JoinRoomUIObject->AddToViewport();
+}
+
+void ACCPlayerController::ChattingRoomToWaitRoom()
+{
+	SetPlayerState(EPlayerState::Login);
+	WaitRoomUIObject = Cast<UUW_WaitRoom>(FindAndMakeClassObjects(WB_WaitRoom_Path));
+	if (!WaitRoomUIObject)
+	{
+		return;
+	}
+	WaitRoomUIObject->AddToViewport();
+}
+
+void ACCPlayerController::SetJoinRoomResultUI(const FString& msg)
+{
+	// donghyun : 상황에 따라 return
+	if (!JoinRoomUIObject)
+	{
+		return;
+	}
+	JoinRoomUIObject->SetJoinRoomResultUI(msg);
+}
+
+void ACCPlayerController::RemoveJoinRoomPopup()
+{
+	if (!JoinRoomUIObject)
+	{
+		return;
+	}
+	JoinRoomUIObject->RemoveFromViewport();
+}
+
+void ACCPlayerController::SetWhisperUI(const FString& msg)
+{
+	if (!WaitRoomUIObject)
+	{
+		return;
+	}
+	WaitRoomUIObject->SetWhisperUI(msg);
 }
 
 UUserWidget* ACCPlayerController::FindAndMakeClassObjects(FString& Path)

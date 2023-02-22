@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Runtime/UMG/Public/Components/Button.h"
 #include "Runtime/UMG/Public/Components/ScrollBox.h"
+#include "Runtime/UMG/Public/Components/EditableTextBox.h"
 
 #include "UW_WaitRoom.generated.h"
 
@@ -20,11 +21,9 @@ class CHATTINGCLIENT_API UUW_WaitRoom : public UUserWidget
 	
 private:
 	UPROPERTY(Meta = (BindWidget))
-		UScrollBox* ScrollBox_PlayerList;
+		UScrollBox* ScrollBox_InfoList;
 	UPROPERTY(Meta = (BindWidget))
 		UScrollBox* ScrollBox_ChatList;
-	UPROPERTY(Meta = (BindWidget))
-		UScrollBox* ScrollBox_RoomList;
 
 	UPROPERTY(Meta = (BindWidget))
 		UButton* Button_RoomList_Renew;
@@ -37,9 +36,12 @@ private:
 	UPROPERTY(Meta = (BindWidget))
 		UButton* Button_Player_Info;
 	UPROPERTY(Meta = (BindWidget))
-		UButton* Button_Send_Whisper;
-	UPROPERTY(Meta = (BindWidget))
 		UButton* Button_PlayerList_Renew;
+
+	UPROPERTY(Meta = (BindWidget))
+		UEditableTextBox* Input_PlayerName;
+	UPROPERTY(Meta = (BindWidget))
+		UEditableTextBox* Input_WhisperMsg;
 
 	UFUNCTION(BlueprintCallable)
 		void RoomListRenewButtonCallback();
@@ -52,9 +54,10 @@ private:
 	UFUNCTION(BlueprintCallable)
 		void PlayerInfoButtonCallback();
 	UFUNCTION(BlueprintCallable)
-		void SendWhisperButtonCallback();
-	UFUNCTION(BlueprintCallable)
 		void PlayerListRenewButtonCallback();
+
+	UFUNCTION(BlueprintCallable)
+		void SendWhisperCallback(const FText& Text, ETextCommit::Type CommitMethod);
 
 	UFUNCTION(BlueprintCallable)
 		class ACCPlayerController* GetPlayerController();
@@ -65,6 +68,6 @@ protected:
 	virtual void NativeConstruct();
 
 public:
-	void SetPlayerListUI(const FString& msg);
-	void SetRoomListUI(const FString& msg);
+	void SetInfoListUI(const FString& msg);
+	void SetWhisperUI(const FString& msg);
 };
