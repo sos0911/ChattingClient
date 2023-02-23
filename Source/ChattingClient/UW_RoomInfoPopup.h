@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Runtime/UMG/Public/Components/Button.h"
-#include "Runtime/UMG/Public/Components/ScrollBox.h"
-#include "Runtime/UMG/Public/Components/TextBlock.h"
-#include "Runtime/UMG/Public/Components/EditableTextBox.h"
 
 #include "UW_RoomInfoPopup.generated.h"
+
+class UScrollBox;
+class UEditableTextBox;
+class UButton;
 
 class UCCNetworkManager;
 
@@ -43,9 +43,10 @@ private:
 	UCCNetworkManager* NetworkManager;
 
 protected:
-	virtual void NativeConstruct();
+	virtual void NativeConstruct() override;
 
 public:
+	// donghyun : 채팅방 정보 갱신 함수
 	void SetRoomInfoUI(const FString& msg);
 };
 

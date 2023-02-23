@@ -3,7 +3,9 @@
 
 #include "CCPlayerState.h"
 
+
 ACCPlayerState::ACCPlayerState()
 {
 	EnumPlayerState = EPlayerState::UnConnected;
+	BefEnumPlayerState = EPlayerState::UnConnected;
 }

@@ -7,6 +7,10 @@
 #include "CCPlayerController.h"
 #include "CCNetworkManager.h"
 
+#include "Runtime/UMG/Public/Components/Button.h"
+#include "Runtime/UMG/Public/Components/ScrollBox.h"
+#include "Runtime/UMG/Public/Components/TextBlock.h"
+#include "Runtime/UMG/Public/Components/EditableTextBox.h"
 
 void UUW_JoinRoomPopup::JoinRoomButtonCallback()
 {
@@ -25,10 +29,6 @@ void UUW_JoinRoomPopup::JoinRoomButtonCallback()
 	NetworkManager->sendMsg(NetworkManager->FormatJoinRoomComm(Input_RoomNum->GetText().ToString()));
 	PlayerControllerPtr->SetPlayerState(EPlayerState::JoinRoomCommSent);
 	UE_LOG(LogTemp, Warning, TEXT("JoinRoom command sent"));
-
-	// donghyun : 아래 작업을 서버 응답 도착 후 응답에 따라 달리 해줘야 하므로 주석 처리
-	/*this->RemoveFromViewport();
-	PlayerControllerPtr->WaitRoomToChattingRoom();*/
 }
 
 void UUW_JoinRoomPopup::JoinRoomExitCallback()

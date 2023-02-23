@@ -7,6 +7,10 @@
 #include "CCPlayerController.h"
 #include "CCNetworkManager.h"
 
+#include "Runtime/UMG/Public/Components/Button.h"
+#include "Runtime/UMG/Public/Components/ScrollBox.h"
+#include "Runtime/UMG/Public/Components/TextBlock.h"
+#include "Runtime/UMG/Public/Components/EditableTextBox.h"
 
 void UUW_RoomInfoPopup::RoomInfoRenewButtonCallback()
 {

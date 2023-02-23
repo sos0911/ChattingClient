@@ -4,15 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Runtime/UMG/Public/Components/EditableTextBox.h"
-#include "Runtime/UMG/Public/Components/Button.h"
-#include "Runtime/UMG/Public/Components/TextBlock.h"
-#include "CCNetworkManager.h"
-#include "CCPlayerController.h"
-#include "CCPlayerState.h"
-#include "Kismet/GameplayStatics.h"
 
 #include "UW_Login.generated.h"
+
+class UScrollBox;
+class UEditableTextBox;
+class UButton;
+class UTextBlock;
+class UCCNetworkManager;
 
 /**
  * 
@@ -49,8 +48,10 @@ private:
 	UCCNetworkManager* NetworkManager;
 
 protected:
-	virtual void NativeConstruct();
+	virtual void NativeConstruct() override;
 public:
+	// donghyun : 로그인 UI 갱신 함수
 	void SetConnectedUI();
+	// donghyun : 로그인 관련 이슈 갱신 함수
 	void SetLoginNotifyUI(const FString& msg);
 };

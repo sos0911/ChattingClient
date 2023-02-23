@@ -4,6 +4,17 @@
 #include "UW_Login.h"
 #include "FServerProtocol.h"
 
+#include "CCNetworkManager.h"
+
+#include "CCNetworkManager.h"
+#include "CCPlayerController.h"
+#include "CCPlayerState.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Runtime/UMG/Public/Components/EditableTextBox.h"
+#include "Runtime/UMG/Public/Components/Button.h"
+#include "Runtime/UMG/Public/Components/TextBlock.h"
+
 void UUW_Login::SummitButtonCallback()
 {
 	auto PlayerControllerPtr = GetPlayerController();
@@ -26,20 +37,7 @@ void UUW_Login::SummitButtonCallback()
 			return;
 		}
 
-		/*int Itemnumber = 2;
-		TMap<FString, FStringFormatArg> args;
-		args.Emplace(Input_IP->GetText().ToString(), \
-			Input_Port->GetText().ToString());
-		FString msg = FString::Format(TEXT("o {} {}"), args);*/
-
 		NetworkManager->Initialize(Input_IP->GetText().ToString(), Input_Port->GetText().ToString());
-
-		//PlayerControllerPtr->SetConntectedUI();
-		//SetConnectedUI();
-
-		/*FString msg = FString::Printf(TEXT("o %s %s"), *(Input_IP->GetText().ToString()), \
-			* (Input_Port->GetText().ToString()));
-		NetworkManager->sendMsg(msg);*/
 	}
 	// donghyun : 2. 로그인 부분
 	else if(PlayerState->EnumPlayerState == EPlayerState::Connected)

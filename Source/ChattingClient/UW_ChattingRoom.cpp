@@ -6,6 +6,11 @@
 #include "CCPlayerController.h"
 #include "CCNetworkManager.h"
 
+#include "Runtime/UMG/Public/Components/Button.h"
+#include "Runtime/UMG/Public/Components/ScrollBox.h"
+#include "Runtime/UMG/Public/Components/TextBlock.h"
+#include "Runtime/UMG/Public/Components/EditableTextBox.h"
+
 void UUW_ChattingRoom::RoomExitCallback()
 {
 	auto PlayerControllerPtr = GetPlayerController();
@@ -23,8 +28,6 @@ void UUW_ChattingRoom::SendChattingCallback(const FText& Text, ETextCommit::Type
 {
 	switch (CommitMethod)
 	{
-	/*case ETextCommit::Default:
-		break;*/
 	case ETextCommit::OnEnter:
 	{
 		if (Text.IsEmpty())
@@ -37,19 +40,9 @@ void UUW_ChattingRoom::SendChattingCallback(const FText& Text, ETextCommit::Type
 		}
 
 		NetworkManager->sendMsg(Input_Chat->GetText().ToString() + '\n');
-
-		/*UTextBlock* NewTextBlock = NewObject<UTextBlock>();
-		NewTextBlock->SetText(Text);
-		ScrollBox_Chat->AddChild(NewTextBlock);
-		ScrollBox_Chat->ScrollToEnd();*/
-
 		Input_Chat->SetText(FText());
 	}
 	break;
-	/*case ETextCommit::OnUserMovedFocus:
-		break;
-	case ETextCommit::OnCleared:
-		break;*/
 	default:
 		break;
 	}
@@ -88,7 +81,6 @@ void UUW_ChattingRoom::RenewChattingRoomLog(const FString& msg)
 	int32 MsgSize = msg.Len();
 	FString SubStr = msg.Mid(0, MsgSize - 2);
 	NewTextBlock->SetText(FText::FromString(SubStr));
-	//NewTextBlock->SetText(FText::FromString(msg));
 
 	ScrollBox_Chat->AddChild(NewTextBlock);
 	ScrollBox_Chat->ScrollToEnd();

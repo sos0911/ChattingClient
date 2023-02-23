@@ -7,9 +7,13 @@
 #include "CCPlayerState.h"
 #include <string>
 #include "Internationalization/Text.h"
-//#include "Internationalization/TextConverter.h"
 #include "Internationalization/Internationalization.h"
 #include "FServerProtocol.h"
+
+#include "Engine/GameInstance.h"
+#include "Sockets.h"
+#include "Runtime/Networking/Public/Networking.h"
+#include "SocketSubsystem.h"
 
 void UCCNetworkManager::Shutdown()
 {
@@ -23,9 +27,6 @@ UCCNetworkManager::UCCNetworkManager()
 		CreateSocket(NAME_Stream, TEXT("default"), false);
 
 	EncodedBuf = "";
-
-	// donghyun : 플레이어 컨트롤러 캐싱
-	//PlayerController =  Cast<ACCPlayerController>(GetWorld()->GetFirstPlayerController());
 }
 
 void UCCNetworkManager::Initialize(const FString& ServerIP_Str, const FString& Port)
@@ -34,7 +35,6 @@ void UCCNetworkManager::Initialize(const FString& ServerIP_Str, const FString& P
 	{
 		APlayerController* Temp = GetWorld()->GetFirstPlayerController();
 		PlayerController = Cast<ACCPlayerController>(Temp);
-		//PlayerController = Cast<ACCPlayerController>(GetWorld()->GetFirstPlayerController());
 	}
 
 	int32 Port_Int = FCString::Atoi(*Port);
@@ -79,8 +79,7 @@ void UCCNetworkManager::sendMsg(const FString& msg)
 		return;
 	}
 
-	//packetEnd += "\n";
-	char message[1024];
+	char message[RECVBUFSIZE];
 	const wchar_t* encode = *msg;
 	char defaultSetting = '?';
 
@@ -136,8 +135,6 @@ void UCCNetworkManager::RecvMsg()
 
 void UCCNetworkManager::JudgePacket(const FString& msg)
 {
-	//UE_LOG(LogTemp, Warning, TEXT(msg));
-
 	EPlayerState CurPlayerState = PlayerController->GetPlayerState();
 
 	switch (CurPlayerState)
@@ -198,6 +195,20 @@ void UCCNetworkManager::JudgePacket(const FString& msg)
 		}
 		break;
 	}
+	case EPlayerState::MakeRoomCommSent:
+	{
+		if (msg.Contains(FString(JoinRoomSuccessMsg)))
+		{
+			PlayerController->RemoveMakeRoomPopup();
+			PlayerController->WaitRoomToChattingRoom();
+			PlayerController->RenewChattingRoomLog(msg);
+		}
+		else
+		{
+			PlayerController->SetMakeRoomResultUI(msg);
+		}
+		break;
+	}
 	case EPlayerState::Login:
 	{
 		// donghyun : 보통 귓속말이 오는 경우이다.
@@ -210,11 +221,6 @@ void UCCNetworkManager::JudgePacket(const FString& msg)
 	}
 	}
 	
-}
-
-void UCCNetworkManager::Init()
-{
-
 }
 
 void UCCNetworkManager::closeConnect()
@@ -271,31 +277,3 @@ const FString UCCNetworkManager::QuitProgramComm()
 {
 	return FString::Printf(TEXT("x\n"));
 }
-
-
-//FString UCCNetworkManager::KoreanToFString(const FString& InKoreanText)
-//{
-//	FString OutUTF8Text;
-//
-//	const FTextConverter::EConversionMode ConversionMode = FTextConverter::EConversionMode::AutoDetect;
-//	const FString SourceString = InKoreanText;
-//	const bool bEnsureTerminated = true;
-//	const TCHAR* SourcePtr = *SourceString;
-//	const int32 SourceLength = FCString::Strlen(SourcePtr);
-//	const ESearchCase::Type SearchCase = ESearchCase::CaseSensitive;
-//	const ESearchDir::Type SearchDir = ESearchDir::FromEnd;
-//	const FString ChosenCulture = FString(TEXT("ko-KR"));
-//
-//	FTextConverter::Convert(
-//		ConversionMode,
-//		SourcePtr,
-//		SourceLength,
-//		OutUTF8Text,
-//		bEnsureTerminated,
-//		SearchCase,
-//		SearchDir,
-//		ChosenCulture
-//	);
-//
-//	return OutUTF8Text;
-//}

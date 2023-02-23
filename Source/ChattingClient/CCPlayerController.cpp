@@ -10,6 +10,9 @@
 #include "UW_MakeRoomPopup.h"
 #include "UW_ChattingRoom.h"
 
+#include "GameFramework/PlayerController.h"
+#include "CCPlayerState.h"
+#include "Kismet/GameplayStatics.h"
 
 ACCPlayerController::ACCPlayerController()
 {
@@ -34,11 +37,6 @@ void ACCPlayerController::BeginPlay()
 
 	CCPlayerStatePtr = Cast<ACCPlayerState>(PlayerState);
 }
-
-//void ACCPlayerController::SetupInputComponent()
-//{
-//	Super::SetupInputComponent();
-//}
 
 void ACCPlayerController::PlayerTick(float Deltatime)
 {
@@ -69,19 +67,16 @@ void ACCPlayerController::UndoPlayerState()
 
 EPlayerState& ACCPlayerController::GetPlayerState()
 {
-	// TODO: 여기에 return 문을 삽입합니다.
 	return CCPlayerStatePtr->EnumPlayerState;
 }
 
 void ACCPlayerController::SetConntectedUI()
 {
 	// donghyun : 연결이 성공했으므로 로그인 UI로 변경
-	//auto LoginUIObject = Cast<UUW_Login>(FindAndMakeClassObjects(WB_Login_Path));
 	if (!LoginUIObject)
 	{
 		return;
 	}
-	//auto LoginUIObject = Cast<UUW_Login>(FindAndMakeClassObjects(WB_Login_Path));
 	LoginUIObject->SetConnectedUI();
 }
 
@@ -92,7 +87,6 @@ void ACCPlayerController::SetLoginUI()
 	{
 		return;
 	}
-	//auto LoginUIObject = Cast<UUW_Login>(FindAndMakeClassObjects(WB_Login_Path));
 	LoginUIObject->RemoveFromViewport();
 	WaitRoomUIObject = Cast<UUW_WaitRoom>(FindAndMakeClassObjects(WB_WaitRoom_Path));
 	WaitRoomUIObject->AddToViewport();
@@ -104,13 +98,11 @@ void ACCPlayerController::SetInfoListUI(const FString& msg)
 	{
 		return;
 	}
-	//auto WaitRoomUIObject = Cast<UUW_WaitRoom>(FindAndMakeClassObjects(WB_WaitRoom_Path));
 	WaitRoomUIObject->SetInfoListUI(msg);
 }
 
 void ACCPlayerController::SetPlayerInfoUI(const FString& msg)
 {
-	//PlayerInfoUIObject = Cast<UUW_PlayerInfoPopup>(FindAndMakeClassObjects(WB_PlayerInfo_Path));
 	if (!PlayerInfoUIObject)
 	{
 		return;
@@ -207,12 +199,20 @@ void ACCPlayerController::ChattingRoomToWaitRoom()
 
 void ACCPlayerController::SetJoinRoomResultUI(const FString& msg)
 {
-	// donghyun : 상황에 따라 return
 	if (!JoinRoomUIObject)
 	{
 		return;
 	}
 	JoinRoomUIObject->SetJoinRoomResultUI(msg);
+}
+
+void ACCPlayerController::SetMakeRoomResultUI(const FString& msg)
+{
+	if (!MakeRoomUIObject)
+	{
+		return;
+	}
+	MakeRoomUIObject->SetMakeRoomResultUI(msg);
 }
 
 void ACCPlayerController::RemoveJoinRoomPopup()
@@ -222,6 +222,15 @@ void ACCPlayerController::RemoveJoinRoomPopup()
 		return;
 	}
 	JoinRoomUIObject->RemoveFromViewport();
+}
+
+void ACCPlayerController::RemoveMakeRoomPopup()
+{
+	if (!MakeRoomUIObject)
+	{
+		return;
+	}
+	MakeRoomUIObject->RemoveFromViewport();
 }
 
 void ACCPlayerController::SetWhisperUI(const FString& msg)

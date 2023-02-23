@@ -4,29 +4,16 @@
 
 #include "CoreMinimal.h"
 
-UENUM(BlueprintType)
-enum class EQueryFlag : uint8
-{
-	MakeRoom UMETA(Displayname = "MakeRoom"),
-	JoinRoom UMETA(Displayname = "JoinRoom"),
-	RenewPlayerList UMETA(Displayname = "RenewPlayerList"),
-	RenewRoomList UMETA(Displayname = "RenewRoomList"),
-	ViewRoomInfo UMETA(Displayname = "ViewRoomInfo"),
-	ViewPlayerInfo UMETA(Displayname = "ViewPlayerInfo"),
-	SendWhisper UMETA(Displayname = "SendWhisper"),
-};
-
 constexpr int RECVBUFSIZE = 1024;
 
 // donghyun : 아래 msg들은 실제로 오는 메세지의 일부분일 수 있음
-//extern FString LoginSuccessMsg = TEXT("로그인 하였습니다.");
-//extern FString LoginFailMsg = TEXT("해당 이름은 사용할 수 없습니다");
 extern FString LoginSuccessMsg;
 extern FString LoginFailMsg;
 extern FString PlayerListMsg;
 extern FString JoinRoomSuccessMsg;
 extern FString JoinRoomFailMsg;
 extern FString FailToConnectMsg;
+extern FString FailToExecuteQuery;
 
 //대화방이 개설되었습니다.
 //자기 자신에게는 보낼 수 없습니다.

@@ -9,6 +9,10 @@
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "FUIProtocol.h"
 
+#include "Runtime/UMG/Public/Components/Button.h"
+#include "Runtime/UMG/Public/Components/ScrollBox.h"
+#include "Runtime/UMG/Public/Components/EditableTextBox.h"
+
 
 class ACCPlayerController* UUW_WaitRoom::GetPlayerController()
 {
@@ -95,12 +99,6 @@ void UUW_WaitRoom::RoomListRenewButtonCallback()
 	{
 		return;
 	}
-
-	/*if (PlayerState->EnumPlayerState != EPlayerState::Login)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Login error occured before using lobby func"));
-		return;
-	}*/
 
 	// donghyun : UI 내용 채우는건 서버로부터 온 후
 	PlayerControllerPtr->SetPlayerState(EPlayerState::ShowRoomListCommSent);
@@ -196,8 +194,6 @@ void UUW_WaitRoom::SendWhisperCallback(const FText& Text, ETextCommit::Type Comm
 {
 	switch (CommitMethod)
 	{
-		/*case ETextCommit::Default:
-			break;*/
 	case ETextCommit::OnEnter:
 	{
 		if (Text.IsEmpty())
@@ -212,7 +208,7 @@ void UUW_WaitRoom::SendWhisperCallback(const FText& Text, ETextCommit::Type Comm
 		NetworkManager->sendMsg(NetworkManager->FormatWhisperComm(Input_PlayerName->GetText().ToString(), \
 			Input_WhisperMsg->GetText().ToString()));
 
-		FString EchoMsg = FString::Printf(TEXT("Sended Msg : %s"), *Input_WhisperMsg->GetText().ToString());
+		FString EchoMsg = FString::Printf(TEXT("Sent Msg : %s"), *Input_WhisperMsg->GetText().ToString());
 
 		UTextBlock* NewTextBlock = NewObject<UTextBlock>();
 		NewTextBlock->Font.Size = FontProtocol::INFOLISTFONTSIZE;
@@ -223,10 +219,6 @@ void UUW_WaitRoom::SendWhisperCallback(const FText& Text, ETextCommit::Type Comm
 		Input_WhisperMsg->SetText(FText());
 	}
 	break;
-	/*case ETextCommit::OnUserMovedFocus:
-		break;
-	case ETextCommit::OnCleared:
-		break;*/
 	default:
 		break;
 	}

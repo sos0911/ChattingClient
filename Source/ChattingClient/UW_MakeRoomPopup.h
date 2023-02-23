@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Runtime/UMG/Public/Components/Button.h"
-#include "Runtime/UMG/Public/Components/ScrollBox.h"
-#include "Runtime/UMG/Public/Components/TextBlock.h"
-#include "Runtime/UMG/Public/Components/EditableTextBox.h"
 
 #include "UW_MakeRoomPopup.generated.h"
+
+class UEditableTextBox;
+class UButton;
+class UScrollBox;
 
 class UCCNetworkManager;
 
@@ -21,6 +21,8 @@ class CHATTINGCLIENT_API UUW_MakeRoomPopup : public UUserWidget
 {
 	GENERATED_BODY()
 private:
+	UPROPERTY(Meta = (BindWidget))
+		UScrollBox* ScrollBox_Result;
 	UPROPERTY(Meta = (BindWidget))
 		UEditableTextBox* Input_RoomName;
 	UPROPERTY(Meta = (BindWidget))
@@ -42,5 +44,8 @@ private:
 	UCCNetworkManager* NetworkManager;
 
 protected:
-	virtual void NativeConstruct();
+	virtual void NativeConstruct() override;
+public:
+	// donghyun : 채팅방 관련 UI 갱신 함수
+	void SetMakeRoomResultUI(const FString& msg);
 };

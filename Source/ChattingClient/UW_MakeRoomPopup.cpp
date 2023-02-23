@@ -7,6 +7,11 @@
 #include "CCPlayerController.h"
 #include "CCNetworkManager.h"
 
+#include "Runtime/UMG/Public/Components/Button.h"
+#include "Runtime/UMG/Public/Components/ScrollBox.h"
+#include "Runtime/UMG/Public/Components/TextBlock.h"
+#include "Runtime/UMG/Public/Components/EditableTextBox.h"
+
 
 void UUW_MakeRoomPopup::MakeRoomButtonCallback()
 {
@@ -24,10 +29,11 @@ void UUW_MakeRoomPopup::MakeRoomButtonCallback()
 
 	NetworkManager->sendMsg(NetworkManager->FormatMakeRoomComm(Input_RoomMaximumCnt->GetText().ToString(), \
 		Input_RoomName->GetText().ToString()));
-	UE_LOG(LogTemp, Warning, TEXT("makeRoom command sent"));
+	PlayerControllerPtr->SetPlayerState(EPlayerState::MakeRoomCommSent);
+	UE_LOG(LogTemp, Warning, TEXT("MakeRoom command sent"));
 
-	this->RemoveFromViewport();
-	PlayerControllerPtr->WaitRoomToChattingRoom();
+	/*this->RemoveFromViewport();
+	PlayerControllerPtr->WaitRoomToChattingRoom();*/
 }
 
 void UUW_MakeRoomPopup::MakeRoomExitCallback()
@@ -69,4 +75,13 @@ void UUW_MakeRoomPopup::NativeConstruct()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("networkmanager is null pointer"));
 	}
+}
+
+void UUW_MakeRoomPopup::SetMakeRoomResultUI(const FString& msg)
+{
+	ScrollBox_Result->ClearChildren();
+
+	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox_Result);
+	NewTextBlock->SetText(FText::FromString(msg));
+	ScrollBox_Result->AddChild(NewTextBlock);
 }

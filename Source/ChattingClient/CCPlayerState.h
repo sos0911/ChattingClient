@@ -4,9 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
+
 #include "CCPlayerState.generated.h"
 
+class APlayerState;
 
+// donghyun : player의 status로 사용하기 위한 enum class
+// 서버에서 명령어가 들어올 때 이걸로 로직 분리
 UENUM(BlueprintType)
 enum class EPlayerState : uint8
 {
@@ -19,6 +23,7 @@ enum class EPlayerState : uint8
 	ShowPlayerInfoCommSent UMETA(Displayname = "ShowPlayerInfoCommSent"),
 	ShowRoomInfoCommSent UMETA(Displayname = "ShowRoomInfoCommSent"),
 	JoinRoomCommSent UMETA(Displayname = "JoinRoomCommSent"),
+	MakeRoomCommSent UMETA(Displayname = "MakeRoomCommSent"),
 };
 
 /**
@@ -30,8 +35,8 @@ class CHATTINGCLIENT_API ACCPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
-	EPlayerState EnumPlayerState = EPlayerState::UnConnected;
-	EPlayerState BefEnumPlayerState = EPlayerState::UnConnected;
+	EPlayerState EnumPlayerState;
+	EPlayerState BefEnumPlayerState;
 
 	ACCPlayerState();
 };

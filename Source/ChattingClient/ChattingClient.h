@@ -3,6 +3,8 @@
 #pragma once
 
 #include "EngineMinimal.h"
+
+// donghyun : 디버그 로그 관련 정의
 DECLARE_LOG_CATEGORY_EXTERN(ChattingClient, Log, All)
 #define ABLOG_CALLINFO (FString(__FUNCTION__) + TEXT("(") + FString::FromInt(__LINE__) + TEXT(")"))
 #define ABLOG_S(Verbosity) UE_LOG(ChattingClient, Verbosity, TEXT("%s"), *ABLOG_CALLINFO)

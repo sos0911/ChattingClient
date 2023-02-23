@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Runtime/UMG/Public/Components/Button.h"
-#include "Runtime/UMG/Public/Components/ScrollBox.h"
-#include "Runtime/UMG/Public/Components/EditableTextBox.h"
 
 #include "UW_WaitRoom.generated.h"
+
+class UScrollBox;
+class UEditableTextBox;
+class UButton;
 
 class UCCNetworkManager;
 /**
@@ -69,9 +70,11 @@ private:
 	UCCNetworkManager* NetworkManager;
 
 protected:
-	virtual void NativeConstruct();
+	virtual void NativeConstruct() override;
 
 public:
+	// donghyun : 채팅방 / 플레이어 목록 UI 갱신 함수
 	void SetInfoListUI(const FString& msg);
+	// donghyun : 귓속말 UI 갱신 함수
 	void SetWhisperUI(const FString& msg);
 };
