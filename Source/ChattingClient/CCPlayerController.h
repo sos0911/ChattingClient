@@ -52,6 +52,7 @@ public:
 	void SetJoinRoomResultUI(const FString& msg);
 	void RemoveJoinRoomPopup();
 	void SetWhisperUI(const FString& msg);
+	void SetLoginNotifyUI(const FString& msg);
 
 	UUserWidget* FindAndMakeClassObjects(FString& Path);
 

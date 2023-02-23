@@ -26,6 +26,7 @@ extern FString LoginFailMsg;
 extern FString PlayerListMsg;
 extern FString JoinRoomSuccessMsg;
 extern FString JoinRoomFailMsg;
+extern FString FailToConnectMsg;
 
 //대화방이 개설되었습니다.
 //자기 자신에게는 보낼 수 없습니다.

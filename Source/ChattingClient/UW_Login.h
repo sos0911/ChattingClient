@@ -38,6 +38,8 @@ private:
 		UTextBlock* Text_IP;
 	UPROPERTY(Meta = (BindWidget))
 		UTextBlock* Text_Port;
+	UPROPERTY(Meta = (BindWidget))
+		UTextBlock* Text_Notify;
 
 	UFUNCTION(BlueprintCallable)
 		void SummitButtonCallback();
@@ -50,4 +52,5 @@ protected:
 	virtual void NativeConstruct();
 public:
 	void SetConnectedUI();
+	void SetLoginNotifyUI(const FString& msg);
 };

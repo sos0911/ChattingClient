@@ -9,6 +9,7 @@
 #include "Internationalization/Text.h"
 //#include "Internationalization/TextConverter.h"
 #include "Internationalization/Internationalization.h"
+#include "FServerProtocol.h"
 
 void UCCNetworkManager::Shutdown()
 {
@@ -20,9 +21,6 @@ UCCNetworkManager::UCCNetworkManager()
 {
 	socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->\
 		CreateSocket(NAME_Stream, TEXT("default"), false);
-	// donghyun : 논블로킹 설정 및 nagle 알고리즘 꺼주기(텔넷과 유사한 환경 조성)
-	socket->SetNonBlocking();
-	socket->SetNoDelay();
 
 	EncodedBuf = "";
 
@@ -49,19 +47,27 @@ void UCCNetworkManager::Initialize(const FString& ServerIP_Str, const FString& P
 
 	if (IsValid)
 	{
-		if (socket->Connect(*ServerIP_Ptr))
+		bool IsConnected = false;
+		IsConnected = socket->Connect(*ServerIP_Ptr);
+		if (IsConnected)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("connected to server"));
 			PlayerController->SetConntectedUI();
 			PlayerController->SetPlayerState(EPlayerState::Connected);
+			// donghyun : 논블로킹 설정 및 nagle 알고리즘 꺼주기(텔넷과 유사한 환경 조성)
+			socket->SetNonBlocking();
+			socket->SetNoDelay();
+
 		}
 		else
 		{
+			PlayerController->SetLoginNotifyUI(FailToConnectMsg);
 			UE_LOG(LogTemp, Warning, TEXT("falied to connect server"));
 		}
 	}
 	else
 	{
+		PlayerController->SetLoginNotifyUI(FailToConnectMsg);
 		UE_LOG(LogTemp, Warning, TEXT("invalid address"));
 	}
 }
@@ -143,6 +149,10 @@ void UCCNetworkManager::JudgePacket(const FString& msg)
 			PlayerController->SetLoginUI();
 			PlayerController->SetPlayerState(EPlayerState::Login);
 		}
+		else
+		{
+			PlayerController->SetLoginNotifyUI(msg);
+		}
 		break;
 	}
 	case EPlayerState::ShowPlayerListCommSent:
@@ -207,6 +217,11 @@ void UCCNetworkManager::Init()
 
 }
 
+void UCCNetworkManager::closeConnect()
+{
+	socket->Close();
+}
+
 const FString UCCNetworkManager::FormatLoginComm(const FString& Nickname)
 {
 	return FString::Printf(TEXT("login %s\n"), *Nickname);
@@ -250,6 +265,11 @@ const FString UCCNetworkManager::FormatJoinRoomComm(const FString& RoomNum)
 const FString UCCNetworkManager::FormatWhisperComm(const FString& PlayerName, const FString& Msg)
 {
 	return FString::Printf(TEXT("to %s %s\n"), *PlayerName, *Msg);
+}
+
+const FString UCCNetworkManager::QuitProgramComm()
+{
+	return FString::Printf(TEXT("x\n"));
 }
 
 

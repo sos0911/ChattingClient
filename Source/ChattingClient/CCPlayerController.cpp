@@ -13,30 +13,12 @@
 
 ACCPlayerController::ACCPlayerController()
 {
-	/*static ConstructorHelpers::FClassFinder<UUW_Login> WB_Login(TEXT(\
-		"/Game/UI/BP_Login"));
-	if (WB_Login.Succeeded())
-	{
-		LoginUIClass = WB_Login.Class;
-	}
-	static ConstructorHelpers::FClassFinder<UUW_WaitRoom> WB_WaitRoom(TEXT(\
-		"/Game/UI/BP_WaitRoom"));
-	if (WB_WaitRoom.Succeeded())
-	{
-		WaitRoomUIClass = WB_WaitRoom.Class;
-	}
-	static ConstructorHelpers::FClassFinder<UUW_PlayerInfoPopup> WB_PlayerInfo(TEXT(\
-		"/Game/UI/BP_PlayerInfo_Popup"));
-	if (WB_PlayerInfo.Succeeded())
-	{
-		PlayerInfoUIClass = WB_PlayerInfo.Class;
-	}*/
 }
 
 void ACCPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetShowMouseCursor(true);
 	LoginUIObject = Cast<UUW_Login>(FindAndMakeClassObjects(WB_Login_Path));
 	if (LoginUIObject)
 	{
@@ -249,6 +231,15 @@ void ACCPlayerController::SetWhisperUI(const FString& msg)
 		return;
 	}
 	WaitRoomUIObject->SetWhisperUI(msg);
+}
+
+void ACCPlayerController::SetLoginNotifyUI(const FString& msg)
+{
+	if(!LoginUIObject)
+	{
+		return;
+	}
+	LoginUIObject->SetLoginNotifyUI(msg);
 }
 
 UUserWidget* ACCPlayerController::FindAndMakeClassObjects(FString& Path)

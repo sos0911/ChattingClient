@@ -37,6 +37,8 @@ private:
 		UButton* Button_Player_Info;
 	UPROPERTY(Meta = (BindWidget))
 		UButton* Button_PlayerList_Renew;
+	UPROPERTY(Meta = (BindWidget))
+		UButton* Button_Exit;
 
 	UPROPERTY(Meta = (BindWidget))
 		UEditableTextBox* Input_PlayerName;
@@ -55,6 +57,8 @@ private:
 		void PlayerInfoButtonCallback();
 	UFUNCTION(BlueprintCallable)
 		void PlayerListRenewButtonCallback();
+	UFUNCTION(BlueprintCallable)
+		void ProgramExitCallback();
 
 	UFUNCTION(BlueprintCallable)
 		void SendWhisperCallback(const FText& Text, ETextCommit::Type CommitMethod);

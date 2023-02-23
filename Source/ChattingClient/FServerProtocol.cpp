@@ -10,3 +10,4 @@ FString PlayerListMsg = TEXT("-- 이용자 목록 --");
 FString JoinRoomSuccessMsg = TEXT("님이 들어오셨습니다.");
 FString JoinRoomFailMsg_Not = TEXT("번 방은 존재하지 않는 대화방입니다.");
 FString JoinRoomFailMsg_Full = TEXT("방 인원 초과로 입장이 불가능합니다.");
+FString FailToConnectMsg = TEXT("서버 연결 실패! 서버 상태나 입력한 번호를 확인하세요.");

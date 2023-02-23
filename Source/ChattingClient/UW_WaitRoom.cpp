@@ -46,6 +46,10 @@ void UUW_WaitRoom::NativeConstruct()
 	{
 		Button_PlayerList_Renew->OnClicked.AddDynamic(this, &UUW_WaitRoom::PlayerListRenewButtonCallback);
 	}
+	if (Button_Exit)
+	{
+		Button_Exit->OnClicked.AddDynamic(this, &UUW_WaitRoom::ProgramExitCallback);
+	}
 
 	Input_WhisperMsg->OnTextCommitted.AddDynamic(this, &UUW_WaitRoom::SendWhisperCallback);
 
@@ -174,6 +178,20 @@ void UUW_WaitRoom::PlayerListRenewButtonCallback()
 	UE_LOG(LogTemp, Warning, TEXT("show playerList command sent"));
 }
 
+void UUW_WaitRoom::ProgramExitCallback()
+{
+	auto PlayerControllerPtr = GetPlayerController();
+	if (!PlayerControllerPtr)
+	{
+		return;
+	}
+
+	// donghyun : 소켓도 마무리지어줘야 함
+	NetworkManager->sendMsg(NetworkManager->QuitProgramComm());
+	NetworkManager->closeConnect();
+	UKismetSystemLibrary::QuitGame(this, 0, EQuitPreference::Quit, false);
+}
+
 void UUW_WaitRoom::SendWhisperCallback(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	switch (CommitMethod)
@@ -194,7 +212,7 @@ void UUW_WaitRoom::SendWhisperCallback(const FText& Text, ETextCommit::Type Comm
 		NetworkManager->sendMsg(NetworkManager->FormatWhisperComm(Input_PlayerName->GetText().ToString(), \
 			Input_WhisperMsg->GetText().ToString()));
 
-		FString EchoMsg = FString::Printf(TEXT("%s > %s"), *Input_PlayerName->GetText().ToString(), *Input_WhisperMsg->GetText().ToString());
+		FString EchoMsg = FString::Printf(TEXT("Sended Msg : %s"), *Input_WhisperMsg->GetText().ToString());
 
 		UTextBlock* NewTextBlock = NewObject<UTextBlock>();
 		NewTextBlock->Font.Size = FontProtocol::INFOLISTFONTSIZE;

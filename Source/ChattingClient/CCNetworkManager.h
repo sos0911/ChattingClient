@@ -41,6 +41,7 @@ public:
 	// donghyun : 메세지 받은거 구분해서 흐름 넘겨주는 함수
 	void JudgePacket(const FString& msg);
 	void Init() override;
+	void closeConnect();
 
 	const FString FormatLoginComm(const FString& Nickname);
 	const FString FormatShowPlayerListComm();
@@ -51,6 +52,7 @@ public:
 	const FString FormatQuitChattingRoomComm();
 	const FString FormatJoinRoomComm(const FString& RoomNum);
 	const FString FormatWhisperComm(const FString& PlayerName, const FString& Msg);
+	const FString QuitProgramComm();
 
 	//FString KoreanToFString(const FString& InKoreanText);
 };

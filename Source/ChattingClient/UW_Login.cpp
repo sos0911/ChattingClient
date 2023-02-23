@@ -2,6 +2,7 @@
 
 
 #include "UW_Login.h"
+#include "FServerProtocol.h"
 
 void UUW_Login::SummitButtonCallback()
 {
@@ -86,4 +87,9 @@ void UUW_Login::SetConnectedUI()
 
 	Text_Nickname->SetVisibility(ESlateVisibility::Visible);
 	Input_Nickname->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UUW_Login::SetLoginNotifyUI(const FString& msg)
+{
+	Text_Notify->SetText(FText::FromString(msg));
 }
